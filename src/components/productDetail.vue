@@ -131,6 +131,7 @@
                           sucmsg=" "
                           datatype="*10-1000"
                           nullmsg="请填写评论内容！"
+                          v-model="inputComment"
                         ></textarea>
                         <span class="Validform_checktip"></span>
                       </div>
@@ -138,9 +139,10 @@
                         <input
                           id="btnSubmit"
                           name="submit"
-                          type="submit"
+                          type="button"
                           value="提交评论"
                           class="submit"
+                          @click="submitComment"
                         >
                         <span class="Validform_checktip"></span>
                       </div>
@@ -233,7 +235,9 @@ export default {
       // 评论列表
       commentsList: [],
       // 评论总条数
-      comTotal: 0
+      comTotal: 0,
+      // 输入的评论内容
+      inputComment:''
     };
   },
   watch: {
@@ -285,6 +289,15 @@ export default {
     changePageSize(pagesize){
       this.pageSize = pagesize;
       this.getComments();
+    },
+    // 提交评论
+    submitComment(){
+      this.$axios.post(`http://111.230.232.110:8899/site/validate/comment/post/goods/${this.$route.params.id}`,{commenttxt:this.inputComment}).then(res=>{
+        // 清空评论输入内容
+        this.inputComment = '';
+        // 重新获取评论数据
+        this.getComments();
+      });
     }
   },
   created() {
