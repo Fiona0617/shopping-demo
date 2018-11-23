@@ -22,15 +22,21 @@
           >
             <div class="banner-nav">
               <ul>
-                <li v-for="(item, index) in catelist" :key="index">
+                <li
+                  v-for="(item) in catelist"
+                  :key="item.id"
+                >
                   <h3>
                     <i class="iconfont icon-arrow-right"></i>
                     <span>{{item.title}}</span>
                     <p>
-                      <span v-for="(item, index) in item.subcates" :key="index">
-                        {{item.title}}&nbsp;
+                      <span
+                        v-for="(it) in item.subcates"
+                        :key="it.id"
+                      >
+                        {{it.title}}&nbsp;
                       </span>
-                      
+
                     </p>
                   </h3>
                   <div class="item-box">
@@ -39,7 +45,11 @@
                         <a href="/goods/40.html">{{item.title}}</a>
                       </dt>
                       <dd>
-                        <a v-for="(item, index) in item.subcates" :key="index" href="/goods/43.html">{{item.title}}</a>
+                        <a
+                          v-for="(it) in item.subcates"
+                          :key="it.id"
+                          href="/goods/43.html"
+                        >{{it.title}}</a>
                       </dd>
                     </dl>
                   </div>
@@ -50,46 +60,17 @@
           <!--幻灯片-->
           <div class="left-705">
             <div class="banner-img">
-              <div
-                id="focus-box"
-                class="focus-box"
-              >
-                <ul class="slides">
-                  <li
-                    class=""
-                    style="width: 100%;height:100%; float: left; margin-right: -100%; position: relative; opacity: 0; display: block; z-index: 1;"
+              <el-carousel height="341px">
+                <el-carousel-item
+                  v-for="item in sliderlist"
+                  :key="item.id"
+                >
+                  <img
+                    :src="item.img_url"
+                    alt=""
                   >
-                    <a href="/goods.html">
-                      <img
-                        style="width: 100%;height:100%;"
-                        src="http://39.108.135.214:8899/imgs/SJ4EgwosX0wTqvyAvhtFGT1w.jpg"
-                        draggable="false"
-                      >
-                    </a>
-                  </li>
-                  <li
-                    style="width: 100%;height:100%; float: left; margin-right: -100%; position: relative; opacity: 1; display: block; z-index: 2;"
-                    class="flex-active-slide"
-                  >
-                    <a href="/goods.html">
-                      <img
-                        style="width: 100%;height:100%;"
-                        src="http://39.108.135.214:8899/upload/201504/20/thumb_201504200314272543.jpg"
-                        draggable="false"
-                      >
-                    </a>
-                  </li>
-                </ul>
-                <ol class="flex-control-nav flex-control-paging">
-                  <li>
-                    <a class="">1</a>
-                  </li>
-                  <li>
-                    <a class="flex-active">2</a>
-                  </li>
-                </ol>
-              </div>
-
+                </el-carousel-item>
+              </el-carousel>
             </div>
           </div>
           <!--/幻灯片-->
@@ -97,14 +78,16 @@
             <ul class="side-img-list">
               <li
                 v-for="(item, index) in toplist"
-                :key="index"
+                :key="item.id"
               >
                 <div class="img-box">
                   <label>{{index+1}}</label>
                   <img :src="item.img_url">
                 </div>
                 <div class="txt-box">
-                  <a href="/goods/show-98.html">{{item.title}}</a>
+                  <router-link :to="'/productDetail/'+item.id">
+                    {{item.title}}
+                  </router-link>
                   <span>{{item.add_time | timeFormat}}</span>
                 </div>
               </li>
@@ -113,11 +96,19 @@
         </div>
       </div>
     </div>
-    <div class="section" v-for="(item, index) in level1cate" :key="index">
+    <div
+      class="section"
+      v-for="(item) in level1cate"
+      :key="item.level1cateid"
+    >
       <div class="main-tit">
         <h2>{{item.catetitle}}</h2>
         <p>
-          <a v-for="(item, index) in item.level2catelist" :key="index" href="/goods/43.html">{{item.subcatetitle}}</a>
+          <a
+            v-for="(it) in item.level2catelist"
+            :key="it.subcateid"
+            href="/goods/43.html"
+          >{{it.subcatetitle}}</a>
           <a href="/goods/40.html">更多
             <i>+</i>
           </a>
@@ -126,26 +117,26 @@
       <div class="wrapper clearfix">
         <div class="wrap-box">
           <ul class="img-list">
-            <li v-for="(item, index) in item.datas" :key="index">
-              <a
-                href="#/site/goodsinfo/87"
-                class=""
-              >
+            <li
+              v-for="(it) in item.datas"
+              :key="it.artID"
+            >
+              <router-link :to="'/productDetail/'+it.artID">
                 <div class="img-box">
-                  <img :src="item.img_url">
+                  <img :src="it.img_url">
                 </div>
                 <div class="info">
-                  <h3>{{item.artTitle}}</h3>
+                  <h3>{{it.artTitle}}</h3>
                   <p class="price">
-                    <b>{{item.sell_price}}</b>元</p>
+                    <b>{{it.sell_price}}</b>元</p>
                   <p>
-                    <strong>库存 {{item.stock_quantity}}</strong>
+                    <strong>库存 {{it.stock_quantity}}</strong>
                     <span>市场价：
-                      <s>{{item.market_price}}</s>
+                      <s>{{it.market_price}}</s>
                     </span>
                   </p>
                 </div>
-              </a>
+              </router-link>
             </li>
           </ul>
         </div>
@@ -155,8 +146,8 @@
 </template>
 
 <script>
-const axios = require('axios');
-const moment = require('moment');
+
+
 
 export default {
   name: 'index',
@@ -169,20 +160,13 @@ export default {
       // 顶部推广
       toplist: [],
       // 一级分类分组数据
-      level1cate:[]
+      level1cate: []
     };
-  },
-  // 过滤器
-  filters: {
-    // 时间格式化
-    timeFormat: function(value) {
-      return moment(value).format('YYYY-MM-DD');
-    }
   },
   // 声明周期钩子
   created() {
     // 调用axios方法请求首页顶部的 轮播图，置顶，分类导航数据，接口1.1
-    axios
+    this.$axios
       .get('http://111.230.232.110:8899/site/goods/gettopdata/goods')
       .then(res => {
         console.log(res);
@@ -191,7 +175,7 @@ export default {
         this.toplist = res.data.message.toplist;
       });
     // 调用axios方法请求按照分类分组数据，接口1.2
-    axios
+    this.$axios
       .get('http://111.230.232.110:8899/site/goods/getgoodsgroup')
       .then(res => {
         console.log(res);
@@ -202,4 +186,8 @@ export default {
 </script>
 
 <style>
+/* 覆盖轮播图插件原有图片样式 */
+.banner-img img {
+  width: 100%;
+}
 </style>
