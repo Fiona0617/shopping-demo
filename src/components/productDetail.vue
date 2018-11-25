@@ -179,6 +179,7 @@
                     <!-- 使用iview分页组件 -->
                     <Page
                       :total="comTotal"
+                      :current="pageIndex"
                       show-sizer
                       show-elevator
                       :page-size="pageSize"
