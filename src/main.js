@@ -18,6 +18,8 @@ Vue.use(iView);
 import axios from 'axios';
 // 添加到vue原型属性中
 Vue.prototype.$axios = axios;
+// 设置基础url，axios自带属性
+axios.defaults.baseURL = 'http://111.230.232.110:8899/';
 
 // 控制台不打印内容
 Vue.config.productionTip = false
@@ -28,11 +30,13 @@ import './assets/css/style.css'
 // 引入组件
 import index from './components/index.vue'
 import productDetail from './components/productDetail.vue'
+import shopCart from './components/shopCart.vue'
 
 let routes = [
   {path:'/',redirect:'/index'},
   {path:'/index',component:index},
-  {path:'/productDetail/:id',component:productDetail}
+  {path:'/productDetail/:id',component:productDetail},
+  {path:'/shopCart',component:shopCart}
 ]
 
 const router = new VueRouter({

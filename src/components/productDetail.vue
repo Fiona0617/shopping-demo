@@ -131,7 +131,7 @@
                           sucmsg=" "
                           datatype="*10-1000"
                           nullmsg="请填写评论内容！"
-                          v-model="inputComment"
+                          v-model.trim ="inputComment"
                         ></textarea>
                         <span class="Validform_checktip"></span>
                       </div>
@@ -177,7 +177,15 @@
                     style="margin: 5px 0px 0px 62px;"
                   >
                     <!-- 使用iview分页组件 -->
-                    <Page :total="comTotal" show-sizer show-elevator :page-size="pageSize" @on-change="changePage" @on-page-size-change="changePageSize" placement="top" />
+                    <Page
+                      :total="comTotal"
+                      show-sizer
+                      show-elevator
+                      :page-size="pageSize"
+                      @on-change="changePage"
+                      @on-page-size-change="changePageSize"
+                      placement="top"
+                    />
                   </div>
                 </div>
               </div>
@@ -254,7 +262,7 @@ export default {
       // 根据id请求商品详情信息
       this.$axios
         .get(
-          `http://111.230.232.110:8899/site/goods/getgoodsinfo/${
+          `site/goods/getgoodsinfo/${
             this.$route.params.id
           }`
         )
@@ -270,7 +278,7 @@ export default {
     getComments() {
       this.$axios
         .get(
-          `http://111.230.232.110:8899/site/comment/getbypage/goods/${
+          `site/comment/getbypage/goods/${
             this.$route.params.id
           }?pageIndex=${this.pageIndex}&pageSize=${this.pageSize}`
         )
@@ -292,12 +300,19 @@ export default {
     },
     // 提交评论
     submitComment(){
-      this.$axios.post(`http://111.230.232.110:8899/site/validate/comment/post/goods/${this.$route.params.id}`,{commenttxt:this.inputComment}).then(res=>{
+      // 判断评论是否为空
+      if(this.inputComment == ''){
+        this.$Message.warning('评论内容不能为空！');
+      }else{
+        this.$axios.post(`site/validate/comment/post/goods/${this.$route.params.id}`,{commenttxt:this.inputComment}).then(res=>{
         // 清空评论输入内容
         this.inputComment = '';
+        // 重新初始化页码为1
+        this.pageIndex = 1;
         // 重新获取评论数据
         this.getComments();
       });
+      }
     }
   },
   created() {

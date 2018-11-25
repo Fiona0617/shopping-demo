@@ -167,7 +167,7 @@ export default {
   created() {
     // 调用axios方法请求首页顶部的 轮播图，置顶，分类导航数据，接口1.1
     this.$axios
-      .get('http://111.230.232.110:8899/site/goods/gettopdata/goods')
+      .get('site/goods/gettopdata/goods')
       .then(res => {
         console.log(res);
         this.catelist = res.data.message.catelist;
@@ -176,7 +176,7 @@ export default {
       });
     // 调用axios方法请求按照分类分组数据，接口1.2
     this.$axios
-      .get('http://111.230.232.110:8899/site/goods/getgoodsgroup')
+      .get('site/goods/getgoodsgroup')
       .then(res => {
         console.log(res);
         this.level1cate = res.data.message;
