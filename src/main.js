@@ -21,6 +21,10 @@ Vue.prototype.$axios = axios;
 // 设置基础url，axios自带属性
 axios.defaults.baseURL = 'http://111.230.232.110:8899/';
 
+// 引入商品展示图放大镜插件
+import ProductZoomer from 'vue-product-zoomer'
+Vue.use(ProductZoomer)
+
 // 控制台不打印内容
 Vue.config.productionTip = false
 
@@ -56,7 +60,45 @@ Vue.filter('timeFormatPlus', function (value) {
   return moment(value).format('YYYY/MM/DD HH:mm:ss');
 })
 
+// 引入并注册vuex
+import Vuex from 'vuex'
+Vue.use(Vuex)
+
+// 创建一个vuex仓库
+const store = new Vuex.Store({
+  state: {
+    //count: 0
+    cartTotal: JSON.parse(localStorage.getItem('cartInfo')) || {}
+  },
+  getters: {
+    cartTotalNum: state => {
+      let sum = 0;
+      for (const index in state.cartTotal) {
+        sum += state.cartTotal[index];
+      }
+      return sum;
+    }
+  },
+  mutations: {
+    // increment (state) {
+    //   state.count++
+    // }
+    addToCart(state,obj){
+      if(state.cartTotal[obj.goodId]!=undefined){
+        state.cartTotal[obj.goodId] += obj.goodNum;
+      }else{
+        Vue.set(state.cartTotal,obj.goodId,obj.goodNum);
+      }
+    }
+  }
+})
+
+window.onbeforeunload = function(){
+  localStorage.setItem('cartInfo',JSON.stringify(store.state.cartTotal));
+}
+
 new Vue({
   render: h => h(App),
-  router
+  router,
+  store
 }).$mount('#app')

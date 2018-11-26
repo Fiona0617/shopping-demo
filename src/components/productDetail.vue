@@ -13,7 +13,13 @@
         <div class="wrap-box">
           <div class="left-925">
             <div class="goods-box clearfix">
-              <div class="pic-box"></div>
+              <div class="pic-box">
+                <!-- 放大镜插件 -->
+                <ProductZoomer v-if="images.normal_size.length!=0"
+                  :base-images="images"
+                  :base-zoomer-options="zoomerOptions"
+                />
+              </div>
               <div class="goods-spec">
                 <h1>{{goodsinfo.title}}</h1>
                 <p class="subtitle">{{goodsinfo.sub_title}}</p>
@@ -67,7 +73,7 @@
                           class="buy"
                         >立即购买</button>
                         <button
-                          onclick="cartAdd(this,'/',0,'/cart.html');"
+                          @click="addtoCart"
                           class="add"
                         >加入购物车</button>
                       </div>
@@ -131,7 +137,7 @@
                           sucmsg=" "
                           datatype="*10-1000"
                           nullmsg="请填写评论内容！"
-                          v-model.trim ="inputComment"
+                          v-model.trim="inputComment"
                         ></textarea>
                         <span class="Validform_checktip"></span>
                       </div>
@@ -246,12 +252,28 @@ export default {
       // 评论总条数
       comTotal: 0,
       // 输入的评论内容
-      inputComment:''
+      inputComment: '',
+      // 放大镜数据
+      images: {
+        
+        normal_size: []
+      },
+      zoomerOptions: {
+        zoomFactor: 3,
+        pane: 'pane',
+        hoverDelay: 300,
+        namespace: 'zoomer',
+        move_by_click: false,
+        scroll_items: 7,
+        choosed_thumb_border_color: '#dd2c00'
+      }
     };
   },
   watch: {
     // 观察url地址的参数值变化
     $route: function(newVal, oldVal) {
+      // 清空原来的放大镜数据
+      this.images.normal_size = [];
       this.initData();
     }
   },
@@ -262,15 +284,20 @@ export default {
       this.buyCount = 1;
       // 根据id请求商品详情信息
       this.$axios
-        .get(
-          `site/goods/getgoodsinfo/${
-            this.$route.params.id
-          }`
-        )
+        .get(`site/goods/getgoodsinfo/${this.$route.params.id}`)
         .then(res => {
           this.goodsinfo = res.data.message.goodsinfo;
           this.hotgoodslist = res.data.message.hotgoodslist;
           this.imglist = res.data.message.imglist;
+          // 清空原来的放大镜数据
+          this.images.normal_size = [];
+          // 放大镜数据
+          this.imglist.forEach((ele,index)=>{
+            this.images.normal_size.push({
+              'id':ele.id,
+              'url':ele.original_path
+            });
+          });
         });
       // 获取评论信息
       this.getComments();
@@ -279,9 +306,9 @@ export default {
     getComments() {
       this.$axios
         .get(
-          `site/comment/getbypage/goods/${
-            this.$route.params.id
-          }?pageIndex=${this.pageIndex}&pageSize=${this.pageSize}`
+          `site/comment/getbypage/goods/${this.$route.params.id}?pageIndex=${
+            this.pageIndex
+          }&pageSize=${this.pageSize}`
         )
         .then(res => {
           console.log(res.data);
@@ -290,30 +317,44 @@ export default {
         });
     },
     // 改变当前页码索引
-    changePage(currentPage){
+    changePage(currentPage) {
       this.pageIndex = currentPage;
       this.getComments();
     },
     // 修改每页显示评论条数
-    changePageSize(pagesize){
+    changePageSize(pagesize) {
       this.pageSize = pagesize;
       this.getComments();
     },
     // 提交评论
-    submitComment(){
+    submitComment() {
       // 判断评论是否为空
-      if(this.inputComment == ''){
+      if (this.inputComment == '') {
         this.$Message.warning('评论内容不能为空！');
-      }else{
-        this.$axios.post(`site/validate/comment/post/goods/${this.$route.params.id}`,{commenttxt:this.inputComment}).then(res=>{
-        // 清空评论输入内容
-        this.inputComment = '';
-        // 重新初始化页码为1
-        this.pageIndex = 1;
-        // 重新获取评论数据
-        this.getComments();
-      });
+      } else {
+        this.$axios
+          .post(`site/validate/comment/post/goods/${this.$route.params.id}`, {
+            commenttxt: this.inputComment
+          })
+          .then(res => {
+            // 清空评论输入内容
+            this.inputComment = '';
+            // 重新初始化页码为1
+            this.pageIndex = 1;
+            // 重新获取评论数据
+            this.getComments();
+          });
       }
+    },
+    // 添加到购物车
+    addtoCart() {
+      // 获取商品id
+      // 获取购买数量
+      // 修改购物车信息
+      this.$store.commit('addToCart', {
+        goodId: this.$route.params.id,
+        goodNum: this.buyCount
+      });
     }
   },
   created() {
@@ -324,4 +365,19 @@ export default {
 </script>
 
 <style>
+.preview-box img {
+  
+  height: 250px;
+}
+.control,
+.thumb-list {
+  height: 70px;
+}
+.thumb-list img {
+  height: 70px;
+}
+.zoomer-zoomer-box {
+  width: 390px;
+  height: 321px;
+}
 </style>

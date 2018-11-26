@@ -26,7 +26,7 @@
                     <router-link to="/shopCart">
                         <i class="iconfont icon-cart"></i>购物车(
                         <span id="shoppingCartCount">
-                            <span>4</span>
+                            <span>{{$store.getters.cartTotalNum}}</span>
                         </span>)
                     </router-link>
                 </div>
@@ -121,6 +121,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'app'
 };
