@@ -169,7 +169,6 @@ export default {
     this.$axios
       .get('site/goods/gettopdata/goods')
       .then(res => {
-        console.log(res);
         this.catelist = res.data.message.catelist;
         this.sliderlist = res.data.message.sliderlist;
         this.toplist = res.data.message.toplist;
@@ -178,7 +177,6 @@ export default {
     this.$axios
       .get('site/goods/getgoodsgroup')
       .then(res => {
-        console.log(res);
         this.level1cate = res.data.message;
       });
   }

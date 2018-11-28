@@ -35,17 +35,44 @@ import './assets/css/style.css'
 import index from './components/index.vue'
 import productDetail from './components/productDetail.vue'
 import shopCart from './components/shopCart.vue'
+import submitOrder from './components/submitOrder.vue'
+import login from './components/login.vue'
+import userInfo from './components/userInfo.vue'
+import orderList from './components/orderList.vue'
+import orderDetail from './components/orderDetail.vue'
 
 let routes = [
   {path:'/',redirect:'/index'},
   {path:'/index',component:index},
   {path:'/productDetail/:id',component:productDetail},
-  {path:'/shopCart',component:shopCart}
+  {path:'/shopCart',component:shopCart},
+  {path:'/submitOrder',component:submitOrder},
+  {path:'/login',component:login},
+  {path:'/userInfo',component:userInfo},
+  {path:'/orderList',component:orderList},
+  {path:'/orderDetail',component:orderDetail}
 ]
 
 const router = new VueRouter({
   routes
 })
+
+// 注册一个全局前置守卫
+// router.beforeEach((to, from, next) => {
+//   if(to.path=='/submitOrder'){
+//     // 发送请求看是否登录
+//     axios.get('site/account/islogin').then(res=>{
+//       console.log(res.data.code);
+//       if(res.data.code=='logined'){
+//         router.push('/submitOrder')
+//       }else{
+//         Vue.prototype.$message('请登录后再提交订单！');
+//         router.push('/login')
+//       }
+//     })
+//   }
+//   next();
+// })
 
 // 引入时间格式化插件
 // const moment = require('moment'); //两种写法都可以
@@ -71,10 +98,11 @@ const store = new Vuex.Store({
     cartTotal: JSON.parse(localStorage.getItem('cartInfo')) || {}
   },
   getters: {
-    cartTotalNum: state => {
+    // states是形参，可以随便命名，自动访问指向state
+    cartTotalNum: states => {
       let sum = 0;
-      for (const index in state.cartTotal) {
-        sum += state.cartTotal[index];
+      for (const index in states.cartTotal) {
+        sum += states.cartTotal[index];
       }
       return sum;
     }
@@ -89,6 +117,9 @@ const store = new Vuex.Store({
       }else{
         Vue.set(state.cartTotal,obj.goodId,obj.goodNum);
       }
+    },
+    updateCart(state,obj){
+      state.cartTotal = obj;
     }
   }
 })

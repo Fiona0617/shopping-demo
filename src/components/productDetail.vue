@@ -15,7 +15,8 @@
             <div class="goods-box clearfix">
               <div class="pic-box">
                 <!-- 放大镜插件 -->
-                <ProductZoomer v-if="images.normal_size.length!=0"
+                <ProductZoomer
+                  v-if="images.normal_size.length!=0"
                   :base-images="images"
                   :base-zoomer-options="zoomerOptions"
                 />
@@ -69,7 +70,7 @@
                         class="btn-buy"
                       >
                         <button
-                          onclick="cartAdd(this,'/',1,'/shopping.html');"
+                          @click="buyToCart"
                           class="buy"
                         >立即购买</button>
                         <button
@@ -255,7 +256,6 @@ export default {
       inputComment: '',
       // 放大镜数据
       images: {
-        
         normal_size: []
       },
       zoomerOptions: {
@@ -292,10 +292,10 @@ export default {
           // 清空原来的放大镜数据
           this.images.normal_size = [];
           // 放大镜数据
-          this.imglist.forEach((ele,index)=>{
+          this.imglist.forEach((ele, index) => {
             this.images.normal_size.push({
-              'id':ele.id,
-              'url':ele.original_path
+              id: ele.id,
+              url: ele.original_path
             });
           });
         });
@@ -355,6 +355,26 @@ export default {
         goodId: this.$route.params.id,
         goodNum: this.buyCount
       });
+      // 提示添加成功
+      // close(msg);
+      this.$message({
+        message: '成功添加到购物车',
+        type: 'success',
+        duration: 800,
+        center: true
+      });
+    },
+    // 立即购买
+    buyToCart(){
+      // 获取商品id
+      // 获取购买数量
+      // 修改购物车信息
+      this.$store.commit('addToCart', {
+        goodId: this.$route.params.id,
+        goodNum: this.buyCount
+      });
+      // 跳转到购物车
+      this.$router.push('/shopCart');
     }
   },
   created() {
@@ -366,7 +386,6 @@ export default {
 
 <style>
 .preview-box img {
-  
   height: 250px;
 }
 .control,
