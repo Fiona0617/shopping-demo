@@ -20,6 +20,8 @@ import axios from 'axios';
 Vue.prototype.$axios = axios;
 // 设置基础url，axios自带属性
 axios.defaults.baseURL = 'http://111.230.232.110:8899/';
+// 设置axios跨域，默认是不携带cookie发送请求的
+axios.defaults.withCredentials = true;
 
 // 引入商品展示图放大镜插件
 import ProductZoomer from 'vue-product-zoomer'
@@ -41,16 +43,42 @@ import userInfo from './components/userInfo.vue'
 import orderList from './components/orderList.vue'
 import orderDetail from './components/orderDetail.vue'
 
-let routes = [
-  {path:'/',redirect:'/index'},
-  {path:'/index',component:index},
-  {path:'/productDetail/:id',component:productDetail},
-  {path:'/shopCart',component:shopCart},
-  {path:'/submitOrder',component:submitOrder},
-  {path:'/login',component:login},
-  {path:'/userInfo',component:userInfo},
-  {path:'/orderList',component:orderList},
-  {path:'/orderDetail',component:orderDetail}
+let routes = [{
+    path: '/',
+    redirect: '/index'
+  },
+  {
+    path: '/index',
+    component: index
+  },
+  {
+    path: '/productDetail/:id',
+    component: productDetail
+  },
+  {
+    path: '/shopCart',
+    component: shopCart
+  },
+  {
+    path: '/submitOrder/:selectedIds',
+    component: submitOrder
+  },
+  {
+    path: '/login',
+    component: login
+  },
+  {
+    path: '/userInfo',
+    component: userInfo
+  },
+  {
+    path: '/orderList',
+    component: orderList
+  },
+  {
+    path: '/orderDetail',
+    component: orderDetail
+  }
 ]
 
 const router = new VueRouter({
@@ -58,21 +86,25 @@ const router = new VueRouter({
 })
 
 // 注册一个全局前置守卫
-// router.beforeEach((to, from, next) => {
-//   if(to.path=='/submitOrder'){
-//     // 发送请求看是否登录
-//     axios.get('site/account/islogin').then(res=>{
-//       console.log(res.data.code);
-//       if(res.data.code=='logined'){
-//         router.push('/submitOrder')
-//       }else{
-//         Vue.prototype.$message('请登录后再提交订单！');
-//         router.push('/login')
-//       }
-//     })
-//   }
-//   next();
-// })
+router.beforeEach((to, from, next) => {
+  if (to.path == '/submitOrder') {
+    // 发送请求看是否登录
+    axios.get('site/account/islogin').then(res => {
+      if (res.data.code == 'logined') {
+        // router.push('/submitOrder');
+        // router.push和next不需要一起使用
+        next();
+      } else {
+        Vue.prototype.$message('请登录后再提交订单！');
+        router.push('/login');
+        //next();
+      }
+    })
+  } else {
+    next();
+  }
+
+})
 
 // 引入时间格式化插件
 // const moment = require('moment'); //两种写法都可以
@@ -95,7 +127,9 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     //count: 0
-    cartTotal: JSON.parse(localStorage.getItem('cartInfo')) || {}
+    cartTotal: JSON.parse(localStorage.getItem('cartInfo')) || {},
+    // 是否登录
+    isLogin: false
   },
   getters: {
     // states是形参，可以随便命名，自动访问指向state
@@ -111,25 +145,39 @@ const store = new Vuex.Store({
     // increment (state) {
     //   state.count++
     // }
-    addToCart(state,obj){
-      if(state.cartTotal[obj.goodId]!=undefined){
+    addToCart(state, obj) {
+      if (state.cartTotal[obj.goodId] != undefined) {
         state.cartTotal[obj.goodId] += obj.goodNum;
-      }else{
-        Vue.set(state.cartTotal,obj.goodId,obj.goodNum);
+      } else {
+        Vue.set(state.cartTotal, obj.goodId, obj.goodNum);
       }
     },
-    updateCart(state,obj){
+    updateCart(state, obj) {
       state.cartTotal = obj;
+    },
+    // 修改登录状态
+    changeLogin(state, isLogin) {
+      state.isLogin = isLogin;
     }
   }
 })
 
-window.onbeforeunload = function(){
-  localStorage.setItem('cartInfo',JSON.stringify(store.state.cartTotal));
+window.onbeforeunload = function () {
+  localStorage.setItem('cartInfo', JSON.stringify(store.state.cartTotal));
 }
 
 new Vue({
   render: h => h(App),
   router,
-  store
+  store,
+  // 声明周期
+  created() {
+    // 每次实例创建完成后，都判断一次是否用户已登录
+    // 因为一次会话刷新后就会消失，要重新判断
+    axios.get('site/account/islogin').then(res => {
+      if (res.data.code == 'logined') {
+        store.state.isLogin = true;
+      }
+    })
+  }
 }).$mount('#app')

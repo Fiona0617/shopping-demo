@@ -83,13 +83,23 @@ export default {
       } else {
         // 调用登录请求
         this.$axios.post('site/account/login',{
-          'user_name':this.userName,
-          'password':this.password
+          "user_name":this.userName,
+          "password":this.passWord
         }).then(res=>{
-          console.log(res);
-        }).catch(res=>{
-          console.log(res);
-        })
+          if(res.data.status==0){
+            //this.$router.push('/shopCart');
+            //登录成功，回到上一页
+            this.$router.go(-1);
+            // 修改登录状态
+            this.$store.state.isLogin = true;
+          }else{
+            this.$message({
+              message: res.data.message,
+              duration: 2000,
+              center: true
+            });
+          }
+        });
       }
     }
   }

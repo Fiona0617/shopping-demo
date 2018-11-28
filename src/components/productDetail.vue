@@ -271,7 +271,7 @@ export default {
   },
   watch: {
     // 观察url地址的参数值变化
-    $route: function(newVal, oldVal) {
+    $route: function() {
       // 清空原来的放大镜数据
       this.images.normal_size = [];
       this.initData();
@@ -292,7 +292,7 @@ export default {
           // 清空原来的放大镜数据
           this.images.normal_size = [];
           // 放大镜数据
-          this.imglist.forEach((ele, index) => {
+          this.imglist.forEach((ele) => {
             this.images.normal_size.push({
               id: ele.id,
               url: ele.original_path
@@ -311,7 +311,6 @@ export default {
           }&pageSize=${this.pageSize}`
         )
         .then(res => {
-          console.log(res.data);
           this.commentsList = res.data.message;
           this.comTotal = res.data.totalcount;
         });

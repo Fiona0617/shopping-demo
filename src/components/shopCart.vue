@@ -156,7 +156,7 @@
               <router-link to="/index">
                 <button class="button">继续购物</button>
               </router-link>
-              <router-link to="/submitOrder">
+              <router-link :to="'/submitOrder/'+selectedIds">
                 <button class="submit">立即结算</button>
               </router-link>
             </div>
@@ -211,6 +211,18 @@ export default {
         }
       });
       return sum;
+    },
+    // 选中的要结算的商品ids
+    selectedIds:function(){
+      let ids = '';
+      this.cartInfos.forEach(ele=>{
+        if(ele.isChecked==true){
+          ids += ele.id;
+          ids += ',';
+        }
+      })
+      ids = ids.slice(0,ids.length-1);
+      return ids;
     }
   },
   methods: {
