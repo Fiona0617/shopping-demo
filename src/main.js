@@ -87,7 +87,7 @@ const router = new VueRouter({
 
 // 注册一个全局前置守卫
 router.beforeEach((to, from, next) => {
-  if (to.path == '/submitOrder') {
+  if (to.path.indexOf('/submitOrder')!=-1) {
     // 发送请求看是否登录
     axios.get('site/account/islogin').then(res => {
       if (res.data.code == 'logined') {
