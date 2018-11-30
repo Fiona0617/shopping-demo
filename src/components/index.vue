@@ -3,40 +3,22 @@
     <div class="section">
       <div class="location">
         <span>当前位置：</span>
-        <a
-          href="#/"
-          class="router-link-active"
-        >首页</a> &gt;
-        <a
-          href="#/site/goodslist"
-          class="router-link-exact-active router-link-active"
-        >购物商城</a>
+        <router-link to="/index" class="router-link-active">首页</router-link>&gt;
+        <router-link to="/index" class="router-link-exact-active router-link-active">购物商城</router-link>
       </div>
     </div>
     <div class="section">
       <div class="wrapper">
         <div class="wrap-box">
-          <div
-            class="left-220"
-            style="margin: 0px;"
-          >
+          <div class="left-220" style="margin: 0px;">
             <div class="banner-nav">
               <ul>
-                <li
-                  v-for="(item) in catelist"
-                  :key="item.id"
-                >
+                <li v-for="(item) in catelist" :key="item.id">
                   <h3>
                     <i class="iconfont icon-arrow-right"></i>
                     <span>{{item.title}}</span>
                     <p>
-                      <span
-                        v-for="(it) in item.subcates"
-                        :key="it.id"
-                      >
-                        {{it.title}}&nbsp;
-                      </span>
-
+                      <span v-for="(it) in item.subcates" :key="it.id">{{it.title}}&nbsp;</span>
                     </p>
                   </h3>
                   <div class="item-box">
@@ -61,14 +43,8 @@
           <div class="left-705">
             <div class="banner-img">
               <el-carousel height="341px">
-                <el-carousel-item
-                  v-for="item in sliderlist"
-                  :key="item.id"
-                >
-                  <img
-                    :src="item.img_url"
-                    alt=""
-                  >
+                <el-carousel-item v-for="item in sliderlist" :key="item.id">
+                  <img :src="item.img_url" alt>
                 </el-carousel-item>
               </el-carousel>
             </div>
@@ -76,18 +52,13 @@
           <!--/幻灯片-->
           <div class="left-220">
             <ul class="side-img-list">
-              <li
-                v-for="(item, index) in toplist"
-                :key="item.id"
-              >
+              <li v-for="(item, index) in toplist" :key="item.id">
                 <div class="img-box">
                   <label>{{index+1}}</label>
                   <img :src="item.img_url">
                 </div>
                 <div class="txt-box">
-                  <router-link :to="'/productDetail/'+item.id">
-                    {{item.title}}
-                  </router-link>
+                  <router-link :to="'/productDetail/'+item.id">{{item.title}}</router-link>
                   <span>{{item.add_time | timeFormat}}</span>
                 </div>
               </li>
@@ -96,11 +67,7 @@
         </div>
       </div>
     </div>
-    <div
-      class="section"
-      v-for="(item) in level1cate"
-      :key="item.level1cateid"
-    >
+    <div class="section" v-for="(item) in level1cate" :key="item.level1cateid">
       <div class="main-tit">
         <h2>{{item.catetitle}}</h2>
         <p>
@@ -109,7 +76,8 @@
             :key="it.subcateid"
             href="/goods/43.html"
           >{{it.subcatetitle}}</a>
-          <a href="/goods/40.html">更多
+          <a href="/goods/40.html">
+            更多
             <i>+</i>
           </a>
         </p>
@@ -117,10 +85,7 @@
       <div class="wrapper clearfix">
         <div class="wrap-box">
           <ul class="img-list">
-            <li
-              v-for="(it) in item.datas"
-              :key="it.artID"
-            >
+            <li v-for="(it) in item.datas" :key="it.artID">
               <router-link :to="'/productDetail/'+it.artID">
                 <div class="img-box">
                   <img :src="it.img_url">
@@ -128,10 +93,12 @@
                 <div class="info">
                   <h3>{{it.artTitle}}</h3>
                   <p class="price">
-                    <b>{{it.sell_price}}</b>元</p>
+                    <b>{{it.sell_price}}</b>元
+                  </p>
                   <p>
                     <strong>库存 {{it.stock_quantity}}</strong>
-                    <span>市场价：
+                    <span>
+                      市场价：
                       <s>{{it.market_price}}</s>
                     </span>
                   </p>
@@ -146,11 +113,8 @@
 </template>
 
 <script>
-
-
-
 export default {
-  name: 'index',
+  name: "index",
   data: function() {
     return {
       // 分类列表
@@ -166,19 +130,15 @@ export default {
   // 声明周期钩子
   created() {
     // 调用axios方法请求首页顶部的 轮播图，置顶，分类导航数据，接口1.1
-    this.$axios
-      .get('site/goods/gettopdata/goods')
-      .then(res => {
-        this.catelist = res.data.message.catelist;
-        this.sliderlist = res.data.message.sliderlist;
-        this.toplist = res.data.message.toplist;
-      });
+    this.$axios.get("site/goods/gettopdata/goods").then(res => {
+      this.catelist = res.data.message.catelist;
+      this.sliderlist = res.data.message.sliderlist;
+      this.toplist = res.data.message.toplist;
+    });
     // 调用axios方法请求按照分类分组数据，接口1.2
-    this.$axios
-      .get('site/goods/getgoodsgroup')
-      .then(res => {
-        this.level1cate = res.data.message;
-      });
+    this.$axios.get("site/goods/getgoodsgroup").then(res => {
+      this.level1cate = res.data.message;
+    });
   }
 };
 </script>

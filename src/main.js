@@ -41,6 +41,7 @@ import submitOrder from './components/submitOrder.vue'
 import payDetail from './components/payDetail.vue'
 import paySuccess from './components/paySuccess.vue'
 import login from './components/login.vue'
+import user from './components/user.vue'
 import userInfo from './components/userInfo.vue'
 import orderList from './components/orderList.vue'
 import orderDetail from './components/orderDetail.vue'
@@ -65,41 +66,64 @@ let routes = [{
     path: '/submitOrder/:selectedIds',
     component: submitOrder,
     // 添加路由元信息
-    meta: { checkLogin: true }
+    meta: {
+      checkLogin: true
+    }
   },
   {
     path: '/payDetail/:orderId',
     component: payDetail,
     // 添加路由元信息
-    meta: { checkLogin: true }
+    meta: {
+      checkLogin: true
+    }
   },
   {
     path: '/paySuccess',
     component: paySuccess,
     // 添加路由元信息
-    meta: { checkLogin: true }
+    meta: {
+      checkLogin: true
+    }
   },
   {
     path: '/login',
     component: login
   },
   {
-    path: '/userInfo',
-    component: userInfo,
+    path: '/user',
+    component: user,
+    redirect: '/user/userInfo',
     // 添加路由元信息
-    meta: { checkLogin: true }
-  },
-  {
-    path: '/orderList',
-    component: orderList,
-    // 添加路由元信息
-    meta: { checkLogin: true }
+    meta: {
+      checkLogin: true
+    },
+    children: [
+      {
+        path: 'userInfo',
+        component: userInfo,
+        // 添加路由元信息
+        meta: {
+          checkLogin: true
+        }
+      },
+      {
+        path: 'orderList',
+        component: orderList,
+        // 添加路由元信息
+        meta: {
+          checkLogin: true
+        }
+      }
+    ]
   },
   {
     path: '/orderDetail',
     component: orderDetail,
     // 添加路由元信息
-    meta: { checkLogin: true }
+    meta: {
+      checkLogin: true
+    }
   }
 ]
 
@@ -126,7 +150,11 @@ router.beforeEach((to, from, next) => {
   } else {
     next();
   }
+});
 
+// 跳转后返回顶部，全局后置守卫
+router.afterEach((to,from,next) => {
+  window.scrollTo(0,0);
 })
 
 // 引入时间格式化插件
@@ -180,9 +208,9 @@ const store = new Vuex.Store({
       state.isLogin = isLogin;
     },
     // 根据id删除购物车中的商品记录
-    delCartById(state,id){
+    delCartById(state, id) {
       // 必须用api方法删除，否则无法监听到数据变化
-      Vue.delete(state.cartTotal,id);
+      Vue.delete(state.cartTotal, id);
     }
   }
 })

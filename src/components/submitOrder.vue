@@ -379,7 +379,7 @@ export default {
 };
 </script>
 
-<style>
+<style >
 /* .el-input {
   width: 50%;
 } */
