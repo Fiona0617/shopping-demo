@@ -56,7 +56,7 @@
                 <el-input v-model="ruleForm.accept_name"></el-input>
               </el-form-item>
               <!-- 省市联动插件distpicker -->
-              <el-form-item label="所属地区" prop="area">
+              <el-form-item label="所属地区" prop="area" required>
                 <v-distpicker
                   :province="ruleForm.area.province.value"
                   :city="ruleForm.area.city.value"
@@ -85,13 +85,7 @@
                 <!--取得一个DataTable-->
                 <li>
                   <label>
-                    <input
-                      name="payment_id"
-                      type="radio"
-                      onclick="paymentAmountTotal(this);"
-                      value="1"
-                    >
-                    <input name="payment_price" type="hidden" value="0.00">在线支付
+                    <el-radio v-model="ruleForm.payment_id" :label="6">在线支付</el-radio>&nbsp;&nbsp;
                     <em>手续费：0.00元</em>
                   </label>
                 </li>
@@ -103,17 +97,18 @@
                 <!--取得一个DataTable-->
                 <li>
                   <label>
-                    <input
-                      name="express_id"
-                      type="radio"
-                      onclick="freightAmountTotal(this);"
-                      value="1"
-                      data-type="*"
-                      sucmsg=" "
-                    >
-                    <input name="express_price" type="hidden" value="20.00">顺丰快递
-                    <em>费用：20.00元</em>
-                    <span class="Validform_checktip"></span>
+                    <el-radio v-model="ruleForm.express_id" :label="1" @change="ruleForm.expressMoment=22">顺丰</el-radio>&nbsp;
+                    <em>费用：22.00元</em>
+                  </label>
+                  <label>
+                    &nbsp;&nbsp;
+                    <el-radio v-model="ruleForm.express_id" :label="2" @change="ruleForm.expressMoment=18">圆通</el-radio>&nbsp;
+                    <em>费用：18.00元</em>
+                  </label>
+                  <label>
+                    &nbsp;&nbsp;
+                    <el-radio v-model="ruleForm.express_id" :label="3" @change="ruleForm.expressMoment=15">韵达</el-radio>&nbsp;
+                    <em>费用：15.00元</em>
                   </label>
                 </li>
               </ul>
@@ -164,7 +159,12 @@
                   <dl>
                     <dt>订单备注(100字符以内)</dt>
                     <dd>
-                      <textarea name="message" class="input" style="height:35px;"></textarea>
+                      <textarea
+                        v-model="ruleForm.message"
+                        name="message"
+                        class="input"
+                        style="height:35px;"
+                      ></textarea>
                     </dd>
                   </dl>
                 </div>
@@ -179,15 +179,15 @@
                   </p>
                   <p>
                     运费：￥
-                    <label id="expressFee" class="price">0.00</label> 元
+                    <label id="expressFee" class="price">{{ruleForm.expressMoment}}</label> 元
                   </p>
                   <p class="txt-box">
                     应付总金额：￥
-                    <label id="totalAmount" class="price">{{goodsTotalAmount}}</label>
+                    <label id="totalAmount" class="price">{{goodsTotalAmount+ruleForm.expressMoment}}</label>
                   </p>
                   <p class="btn-box">
                     <router-link to="/shopCart" class="btn button">返回购物车</router-link>
-                    <a id="btnSubmit" class="btn submit">确认提交</a>
+                    <a id="btnSubmit" class="btn submit" @click="submitOrder('ruleForm')">确认提交</a>
                   </p>
                 </div>
               </div>
@@ -202,59 +202,59 @@
 
 <script>
 /* 引入省市联动插件 */
-import VDistpicker from 'v-distpicker'
+import VDistpicker from "v-distpicker";
 
 export default {
-  name: 'submitOrder',
+  name: "submitOrder",
   // 注册省市联动插件
   components: { VDistpicker },
   // 数据
-  data:function(){
+  data: function() {
     // 表单验证：自定义验证规则
     let checkMobile = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请输入手机号码'));
+      if (value === "") {
+        callback(new Error("请输入手机号码"));
       } else {
-        if (this.ruleForm.mobile !== '') {
+        if (this.ruleForm.mobile !== "") {
           // 验证数据格式
           let reg = /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/;
-          if(reg.test(value)){
+          if (reg.test(value)) {
             // 匹配成功
             callback();
-          }else{
-            callback(new Error('请输入正确的手机号码！'));
+          } else {
+            callback(new Error("请输入正确的手机号码！"));
           }
         }
       }
     };
     let checkEmail = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请输入电子邮箱'));
+      if (value === "") {
+        callback(new Error("请输入电子邮箱"));
       } else {
-        if (this.ruleForm.email !== '') {
+        if (this.ruleForm.email !== "") {
           // 验证数据格式
           let reg = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
-          if(reg.test(value)){
+          if (reg.test(value)) {
             // 匹配成功
             callback();
-          }else{
-            callback(new Error('请输入正确的电子邮箱！'));
+          } else {
+            callback(new Error("请输入正确的电子邮箱！"));
           }
         }
       }
     };
     let checkPostCode = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请输入邮政编码'));
+      if (value === "") {
+        callback(new Error("请输入邮政编码"));
       } else {
-        if (this.ruleForm.post_code !== '') {
+        if (this.ruleForm.post_code !== "") {
           // 验证数据格式
           let reg = /^[1-9]\d{5}(?!\d)$/;
-          if(reg.test(value)){
+          if (reg.test(value)) {
             // 匹配成功
             callback();
-          }else{
-            callback(new Error('请输入正确的邮政编码！'));
+          } else {
+            callback(new Error("请输入正确的邮政编码！"));
           }
         }
       }
@@ -262,85 +262,125 @@ export default {
     // 数据
     return {
       // 选中的商品信息
-      goodsList:[],
+      goodsList: [],
       // 商品总件数
-      goodsTotalCount:0,
+      goodsTotalCount: 0,
       // 商品总金额（不含运费）
-      goodsTotalAmount:0,
+      goodsTotalAmount: 0,
       // 表单验证数据
       ruleForm: {
-        accept_name: '',
-        address: '',
-        mobile: '',
-        email: '',
-        post_code: '',
-        area:{
-          "province": {
-            "code": "440000",
-            "value": "广东省"
+        accept_name: "cross",
+        address: "西乡街道宝安大道海乐花园2栋22楼",
+        mobile: "13245678765",
+        email: "23456@qq.com",
+        post_code: "518000",
+        // 收货人地区
+        area: {
+          province: {
+            code: "440000",
+            value: "广东省"
           },
-          "city": {
-            "code": "440300",
-            "value": "深圳市"
+          city: {
+            code: "440300",
+            value: "深圳市"
           },
-          "area": {
-            "code": "440306",
-            "value": "宝安区"
+          area: {
+            code: "440306",
+            value: "宝安区"
           }
-        }
+        },
+        // 支付方式
+        payment_id: 6,
+        // 运送方式
+        express_id: 1,
+        // 快递费
+        expressMoment: 22,
+        // 订单备注信息
+        message: "测试未修改的数据",
+        // 商品总额
+        goodsAmount: 0,
+        // 购买商品的id
+        goodsids: '',
+        // 购买商品对象，id和数量
+        cargoodsobj: {}
       },
       rules: {
         accept_name: [
-          { required: true, message: '请输入收货人姓名', trigger: 'blur' },
-          { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
+          { required: true, message: "请输入收货人姓名", trigger: "blur" },
+          { min: 2, max: 10, message: "长度在 2 到 10 个字符", trigger: "blur" }
         ],
         address: [
-          { required: true, message: '请输入详细地址', trigger: 'blur' },
-          { min: 2, message: '长度大于2个字符', trigger: 'blur' }
+          { required: true, message: "请输入详细地址", trigger: "blur" },
+          { min: 2, message: "长度大于2个字符", trigger: "blur" }
         ],
-        mobile: [
-          { validator: checkMobile, trigger: 'change' }
-        ],
-        email: [
-          { validator: checkEmail, trigger: 'change' }
-        ],
-        post_code: [
-          { validator: checkPostCode, trigger: 'blur' }
-        ]
+        mobile: [{ validator: checkMobile, trigger: "change" }],
+        email: [{ validator: checkEmail, trigger: "change" }],
+        post_code: [{ validator: checkPostCode, trigger: "blur" }]
       }
-    }
+    };
   },
   created() {
     // 获取要提交订单的商品ids
     let selectedIds = this.$route.params.selectedIds;
     // 调用接口获取购物车中选中的商品信息
-    this.$axios.get(`site/validate/order/getgoodslist/${selectedIds}`).then(res=>{
-      res.data.message.forEach(ele=>{
-        for(const key in this.$store.state.cartTotal){
-          if(key == ele.id){
-            // 修改购买数量
-            ele.buycount = this.$store.state.cartTotal[key];
-            // 计算总的购买商品数量
-            this.goodsTotalCount += ele.buycount;
-            // 计算总的购买商品金额
-            this.goodsTotalAmount += ele.buycount*ele.sell_price;
+    this.$axios
+      .get(`site/validate/order/getgoodslist/${selectedIds}`)
+      .then(res => {
+        res.data.message.forEach(ele => {
+          for (const key in this.$store.state.cartTotal) {
+            if (key == ele.id) {
+              // 修改购买数量
+              ele.buycount = this.$store.state.cartTotal[key];
+              // 计算总的购买商品数量
+              this.goodsTotalCount += ele.buycount;
+              // 计算总的购买商品金额
+              this.goodsTotalAmount += ele.buycount * ele.sell_price;
+            }
           }
-        }
+        });
+        this.goodsList = res.data.message;
       });
-      this.goodsList = res.data.message;
-    })
   },
-  methods:{
+  methods: {
     // 选择最后一项时触发
     onSelected(data) {
       this.area = data;
+    },
+    // 点击提交订单
+    submitOrder(formName) {
+      // 校验表单
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          // 给ruleForm中的一些数据赋值
+          this.goodsList.forEach(ele => {
+            this.ruleForm.cargoodsobj[ele.id] = ele.buycount;
+          });
+          this.ruleForm.goodsAmount = this.goodsTotalAmount;
+          this.ruleForm.goodsids = this.$route.params.selectedIds;
+          // 调用接口提交订单
+          this.$axios.post(`site/validate/order/setorder`,this.ruleForm).then(res=>{
+            // 判断提交状态是否成功
+            if(res.data.status==0){
+              // 删除购物车中已提交订单的商品
+              this.goodsList.forEach(ele=>{
+                this.$store.commit('delCartById',ele.id);
+              });
+              // 跳转到支付页面
+              this.$router.push(`/payDetail/${res.data.message.orderid}`);
+            }
+          })
+        } else {
+          this.$message.error('请填写完整信息后再提交订单！');
+          return false;
+        }
+      });
     }
   }
 };
 </script>
 
 <style>
-.el-input {
+/* .el-input {
   width: 50%;
-}
+} */
 </style>

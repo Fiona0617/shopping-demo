@@ -261,14 +261,17 @@ export default {
       ids += ',';
     }
     ids = ids.substring(0, ids.length - 1);
-    // 通过接口获取购物车信息
-    this.$axios.get(`site/comment/getshopcargoods/${ids}`).then(res => {
-      res.data.message.forEach(ele => {
-        ele.buycount = this.$store.state.cartTotal[ele.id];
-        ele.isChecked = true;
+    // 判断购物车是否有商品
+    if(ids.length>0){
+      // 通过接口获取购物车信息
+      this.$axios.get(`site/comment/getshopcargoods/${ids}`).then(res => {
+        res.data.message.forEach(ele => {
+          ele.buycount = this.$store.state.cartTotal[ele.id];
+          ele.isChecked = true;
+        });
+        this.cartInfos = res.data.message;
       });
-      this.cartInfos = res.data.message;
-    });
+    }
   }
 };
 </script>

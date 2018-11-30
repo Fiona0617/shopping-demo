@@ -38,6 +38,8 @@ import index from './components/index.vue'
 import productDetail from './components/productDetail.vue'
 import shopCart from './components/shopCart.vue'
 import submitOrder from './components/submitOrder.vue'
+import payDetail from './components/payDetail.vue'
+import paySuccess from './components/paySuccess.vue'
 import login from './components/login.vue'
 import userInfo from './components/userInfo.vue'
 import orderList from './components/orderList.vue'
@@ -61,7 +63,21 @@ let routes = [{
   },
   {
     path: '/submitOrder/:selectedIds',
-    component: submitOrder
+    component: submitOrder,
+    // 添加路由元信息
+    meta: { checkLogin: true }
+  },
+  {
+    path: '/payDetail/:orderId',
+    component: payDetail,
+    // 添加路由元信息
+    meta: { checkLogin: true }
+  },
+  {
+    path: '/paySuccess',
+    component: paySuccess,
+    // 添加路由元信息
+    meta: { checkLogin: true }
   },
   {
     path: '/login',
@@ -69,15 +85,21 @@ let routes = [{
   },
   {
     path: '/userInfo',
-    component: userInfo
+    component: userInfo,
+    // 添加路由元信息
+    meta: { checkLogin: true }
   },
   {
     path: '/orderList',
-    component: orderList
+    component: orderList,
+    // 添加路由元信息
+    meta: { checkLogin: true }
   },
   {
     path: '/orderDetail',
-    component: orderDetail
+    component: orderDetail,
+    // 添加路由元信息
+    meta: { checkLogin: true }
   }
 ]
 
@@ -87,7 +109,8 @@ const router = new VueRouter({
 
 // 注册一个全局前置守卫
 router.beforeEach((to, from, next) => {
-  if (to.path.indexOf('/submitOrder')!=-1) {
+  // 通过路由元信息判断是否需要检查登录
+  if (to.meta.checkLogin == true) {
     // 发送请求看是否登录
     axios.get('site/account/islogin').then(res => {
       if (res.data.code == 'logined') {
@@ -142,9 +165,6 @@ const store = new Vuex.Store({
     }
   },
   mutations: {
-    // increment (state) {
-    //   state.count++
-    // }
     addToCart(state, obj) {
       if (state.cartTotal[obj.goodId] != undefined) {
         state.cartTotal[obj.goodId] += obj.goodNum;
@@ -158,6 +178,11 @@ const store = new Vuex.Store({
     // 修改登录状态
     changeLogin(state, isLogin) {
       state.isLogin = isLogin;
+    },
+    // 根据id删除购物车中的商品记录
+    delCartById(state,id){
+      // 必须用api方法删除，否则无法监听到数据变化
+      Vue.delete(state.cartTotal,id);
     }
   }
 })
