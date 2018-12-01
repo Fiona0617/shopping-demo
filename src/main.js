@@ -114,16 +114,16 @@ let routes = [{
         meta: {
           checkLogin: true
         }
+      },
+      {
+        path: 'orderDetail/:orderid',
+        component: orderDetail,
+        // 添加路由元信息
+        meta: {
+          checkLogin: true
+        }
       }
     ]
-  },
-  {
-    path: '/orderDetail',
-    component: orderDetail,
-    // 添加路由元信息
-    meta: {
-      checkLogin: true
-    }
   }
 ]
 
@@ -153,7 +153,7 @@ router.beforeEach((to, from, next) => {
 });
 
 // 跳转后返回顶部，全局后置守卫
-router.afterEach((to,from,next) => {
+router.afterEach((to,from) => {
   window.scrollTo(0,0);
 })
 

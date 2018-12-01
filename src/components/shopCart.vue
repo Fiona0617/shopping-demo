@@ -14,7 +14,8 @@
           <!--购物车头部-->
           <div class="cart-head clearfix">
             <h2>
-              <i class="iconfont icon-cart"></i>我的购物车</h2>
+              <i class="iconfont icon-cart"></i>我的购物车
+            </h2>
             <div class="cart-setp">
               <ul>
                 <li class="first active">
@@ -41,11 +42,7 @@
           <!--购物车头部-->
           <!--商品列表-->
           <div class="cart-box">
-            <input
-              id="jsondata"
-              name="jsondata"
-              type="hidden"
-            >
+            <input id="jsondata" name="jsondata" type="hidden">
             <table
               width="100%"
               align="center"
@@ -56,43 +53,24 @@
             >
               <tbody>
                 <tr>
-                  <th
-                    width="48"
-                    align="center"
-                  >
+                  <th width="48" align="center">
                     <a>选择</a>
                   </th>
                   <th align="center">商品信息</th>
-                  <th
-                    width="84"
-                    align="left"
-                  >单价</th>
-                  <th
-                    width="104"
-                    align="left"
-                  >金额(元)</th>
-                  <th
-                    width="54"
-                    align="center"
-                  >操作</th>
+                  <th width="84" align="left">单价</th>
+                  <th width="104" align="left">金额(元)</th>
+                  <th width="54" align="center">操作</th>
                 </tr>
-                <tr
-                  v-for="(item) in cartInfos"
-                  :key="item.id"
-                >
+                <tr v-for="(item) in cartInfos" :key="item.id">
                   <td>
                     <el-switch
                       v-model="item.isChecked"
                       active-color="#13ce66"
                       inactive-color="#555555"
-                    >
-                    </el-switch>
+                    ></el-switch>
                   </td>
                   <td>
-                    <img
-                      :src="item.img_url"
-                      alt=""
-                    >
+                    <img :src="item.img_url" alt>
                     <span>{{item.title}}</span>
                   </td>
                   <td>
@@ -102,11 +80,7 @@
                     <span>{{item.buycount*item.sell_price}}</span>
                   </td>
                   <td>
-                    <el-input-number
-                      size="small"
-                      v-model="item.buycount"
-                      :min="1"
-                    ></el-input-number>
+                    <el-input-number size="small" v-model="item.buycount" :min="1"></el-input-number>
                     <el-button
                       type="danger"
                       icon="el-icon-delete"
@@ -123,27 +97,20 @@
                       </div>
                       <div class="info">
                         <strong>购物车没有商品！</strong>
-                        <p>您的购物车为空，
-                          <a href="/index.html">马上去购物</a>吧！</p>
+                        <p>
+                          您的购物车为空，
+                          <a href="/index.html">马上去购物</a>吧！
+                        </p>
                       </div>
                     </div>
                   </td>
                 </tr>
                 <tr>
-                  <th
-                    align="right"
-                    colspan="8"
-                  >
+                  <th align="right" colspan="8">
                     已选择商品
-                    <b
-                      class="red"
-                      id="totalQuantity"
-                    >{{cartTotalNum}}</b> 件 &nbsp;&nbsp;&nbsp; 商品总金额（不含运费）：
+                    <b class="red" id="totalQuantity">{{cartTotalNum}}</b> 件 &nbsp;&nbsp;&nbsp; 商品总金额（不含运费）：
                     <span class="red">￥</span>
-                    <b
-                      class="red"
-                      id="totalAmount"
-                    >{{cartTotalMoney}}</b>元
+                    <b class="red" id="totalAmount">{{cartTotalMoney}}</b>元
                   </th>
                 </tr>
               </tbody>
@@ -156,9 +123,12 @@
               <router-link to="/index">
                 <button class="button">继续购物</button>
               </router-link>
-              <router-link :to="'/submitOrder/'+selectedIds">
+              <!-- <router-link :to="'/submitOrder/'+selectedIds">
                 <button class="submit">立即结算</button>
-              </router-link>
+              </router-link>-->
+              <a @click="submitOrder">
+                <button class="submit">立即结算</button>
+              </a>
             </div>
           </div>
           <!--购物车底部-->
@@ -170,7 +140,7 @@
 
 <script>
 export default {
-  name: 'shopCart',
+  name: "shopCart",
   data: function() {
     return {
       // 购物车产品信息
@@ -186,7 +156,7 @@ export default {
         val.forEach(ele => {
           obj[ele.id] = ele.buycount;
         });
-        this.$store.commit('updateCart', obj);
+        this.$store.commit("updateCart", obj);
       },
       deep: true
     }
@@ -213,25 +183,25 @@ export default {
       return sum;
     },
     // 选中的要结算的商品ids
-    selectedIds:function(){
-      let ids = '';
-      this.cartInfos.forEach(ele=>{
-        if(ele.isChecked==true){
+    selectedIds: function() {
+      let ids = "";
+      this.cartInfos.forEach(ele => {
+        if (ele.isChecked == true) {
           ids += ele.id;
-          ids += ',';
+          ids += ",";
         }
-      })
-      ids = ids.slice(0,ids.length-1);
+      });
+      ids = ids.slice(0, ids.length - 1);
       return ids;
     }
   },
   methods: {
     // 删除某条产品
     deleteCartById(id) {
-      this.$confirm('此操作将永久删除, 是否继续?', '温馨提示', {
-        confirmButtonText: '狠心删除',
-        cancelButtonText: '再看看吧',
-        type: 'warning'
+      this.$confirm("此操作将永久删除, 是否继续?", "温馨提示", {
+        confirmButtonText: "狠心删除",
+        cancelButtonText: "再看看吧",
+        type: "warning"
       })
         .then(() => {
           this.cartInfos.forEach((ele, index) => {
@@ -239,8 +209,8 @@ export default {
               this.cartInfos.splice(index, 1);
               // 提示删除成功
               this.$message({
-                type: 'success',
-                message: '删除成功!'
+                type: "success",
+                message: "删除成功!"
               });
             }
           });
@@ -251,18 +221,29 @@ export default {
           //   message: '已取消删除'
           // });
         });
+    },
+    // 立即结算
+    submitOrder() {
+      if (this.selectedIds.length > 0) {
+        this.$router.push("/submitOrder/" + this.selectedIds);
+      } else {
+        this.$message({
+          message: '请选择要购买的商品后，再提交订单！',
+          type: 'warning'
+        });
+      }
     }
   },
   created() {
     // 获取商品ids
-    let ids = '';
+    let ids = "";
     for (const key in this.$store.state.cartTotal) {
       ids += key;
-      ids += ',';
+      ids += ",";
     }
     ids = ids.substring(0, ids.length - 1);
     // 判断购物车是否有商品
-    if(ids.length>0){
+    if (ids.length > 0) {
       // 通过接口获取购物车信息
       this.$axios.get(`site/comment/getshopcargoods/${ids}`).then(res => {
         res.data.message.forEach(ele => {
