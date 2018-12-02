@@ -106,7 +106,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .login-box .input-box {
   line-height: 42px;
 }

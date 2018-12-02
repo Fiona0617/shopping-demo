@@ -143,7 +143,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 /* 覆盖轮播图插件原有图片样式 */
 .banner-img img {
   width: 100%;

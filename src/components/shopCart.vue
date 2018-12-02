@@ -257,7 +257,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 tbody td:nth-child(2) {
   display: flex;
   align-items: center;

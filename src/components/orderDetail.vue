@@ -52,10 +52,7 @@
               @click="receiveGoods"
               class="btn-pay"
             >确认收货</a>
-            <a
-              v-if="orderinfo.status==4"
-              class="btn-pay"
-            >去评价</a>
+            <a v-if="orderinfo.status==4" class="btn-pay">去评价</a>
             <!---->
           </dd>
         </dl>
@@ -87,7 +84,10 @@
                 <img :src="item.imgurl" class="img">
               </td>
               <td align="left">
-                <a target="_blank" href="/goods/show-92.html">{{item.goods_title}}</a>
+                <router-link
+                  target="_blank"
+                  :to="'/productDetail/'+item.goods_id"
+                >{{item.goods_title}}</router-link>
               </td>
               <td align="center">
                 <s>￥{{item.goods_price}}</s>
@@ -154,7 +154,7 @@ export default {
   },
   methods: {
     // 获取订单信息
-    getOrderInfo(){
+    getOrderInfo() {
       // 调用接口：根据订单id获取订单详细信息
       this.$axios
         .get(`site/validate/order/getorderdetial/${this.$route.params.orderid}`)
@@ -170,11 +170,12 @@ export default {
         confirmButtonText: "确定收货",
         cancelButtonText: "取消",
         type: "warning"
-      })
-        .then(() => {
-          // 调用接口：签收
-          this.$axios.get(`site/validate/order/complate/${this.$route.params.orderid}`).then(res=>{
-            if(res.data.status==0){
+      }).then(() => {
+        // 调用接口：签收
+        this.$axios
+          .get(`site/validate/order/complate/${this.$route.params.orderid}`)
+          .then(res => {
+            if (res.data.status == 0) {
               // 提示收货成功
               this.$message({
                 type: "success",
@@ -184,7 +185,7 @@ export default {
               this.getOrderInfo();
             }
           });
-        });
+      });
     }
   },
   created() {

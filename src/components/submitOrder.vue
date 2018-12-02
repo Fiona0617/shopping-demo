@@ -97,17 +97,29 @@
                 <!--取得一个DataTable-->
                 <li>
                   <label>
-                    <el-radio v-model="ruleForm.express_id" :label="1" @change="ruleForm.expressMoment=22">顺丰</el-radio>&nbsp;
+                    <el-radio
+                      v-model="ruleForm.express_id"
+                      :label="1"
+                      @change="ruleForm.expressMoment=22"
+                    >顺丰</el-radio>&nbsp;
                     <em>费用：22.00元</em>
                   </label>
                   <label>
                     &nbsp;&nbsp;
-                    <el-radio v-model="ruleForm.express_id" :label="2" @change="ruleForm.expressMoment=18">圆通</el-radio>&nbsp;
+                    <el-radio
+                      v-model="ruleForm.express_id"
+                      :label="2"
+                      @change="ruleForm.expressMoment=18"
+                    >圆通</el-radio>&nbsp;
                     <em>费用：18.00元</em>
                   </label>
                   <label>
                     &nbsp;&nbsp;
-                    <el-radio v-model="ruleForm.express_id" :label="3" @change="ruleForm.expressMoment=15">韵达</el-radio>&nbsp;
+                    <el-radio
+                      v-model="ruleForm.express_id"
+                      :label="3"
+                      @change="ruleForm.expressMoment=15"
+                    >韵达</el-radio>&nbsp;
                     <em>费用：15.00元</em>
                   </label>
                 </li>
@@ -138,7 +150,7 @@
                       </a>
                     </td>
                     <td>
-                      <a target="_blank" href="/goods/show-89.html">{{item.title}}</a>
+                      <router-link target="_blank" :to="'/productDetail/'+item.id">{{item.title}}</router-link>
                     </td>
                     <td>
                       <span class="red">￥{{item.sell_price}}</span>
@@ -183,7 +195,10 @@
                   </p>
                   <p class="txt-box">
                     应付总金额：￥
-                    <label id="totalAmount" class="price">{{goodsTotalAmount+ruleForm.expressMoment}}</label>
+                    <label
+                      id="totalAmount"
+                      class="price"
+                    >{{goodsTotalAmount+ruleForm.expressMoment}}</label>
                   </p>
                   <p class="btn-box">
                     <router-link to="/shopCart" class="btn button">返回购物车</router-link>
@@ -300,7 +315,7 @@ export default {
         // 商品总额
         goodsAmount: 0,
         // 购买商品的id
-        goodsids: '',
+        goodsids: "",
         // 购买商品对象，id和数量
         cargoodsobj: {}
       },
@@ -358,19 +373,21 @@ export default {
           this.ruleForm.goodsAmount = this.goodsTotalAmount;
           this.ruleForm.goodsids = this.$route.params.selectedIds;
           // 调用接口提交订单
-          this.$axios.post(`site/validate/order/setorder`,this.ruleForm).then(res=>{
-            // 判断提交状态是否成功
-            if(res.data.status==0){
-              // 删除购物车中已提交订单的商品
-              this.goodsList.forEach(ele=>{
-                this.$store.commit('delCartById',ele.id);
-              });
-              // 跳转到支付页面
-              this.$router.push(`/payDetail/${res.data.message.orderid}`);
-            }
-          })
+          this.$axios
+            .post(`site/validate/order/setorder`, this.ruleForm)
+            .then(res => {
+              // 判断提交状态是否成功
+              if (res.data.status == 0) {
+                // 删除购物车中已提交订单的商品
+                this.goodsList.forEach(ele => {
+                  this.$store.commit("delCartById", ele.id);
+                });
+                // 跳转到支付页面
+                this.$router.push(`/payDetail/${res.data.message.orderid}`);
+              }
+            });
         } else {
-          this.$message.error('请填写完整信息后再提交订单！');
+          this.$message.error("请填写完整信息后再提交订单！");
           return false;
         }
       });
@@ -380,7 +397,4 @@ export default {
 </script>
 
 <style >
-/* .el-input {
-  width: 50%;
-} */
 </style>
